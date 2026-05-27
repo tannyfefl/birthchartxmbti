@@ -348,9 +348,20 @@
     }
     .sign-cell .blurb {
       font-style: italic;
-      font-size: 13px;
-      line-height: 1.35;
+      font-size: 13.5px;
+      line-height: 1.4;
+      color: var(--ink-soft);
+      margin-bottom: 10px;
+      min-height: 38px;
+    }
+    .sign-cell .role-note {
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      font-style: italic;
       color: var(--faded);
+      line-height: 1.3;
+      padding-top: 8px;
+      border-top: 1px dotted var(--rule);
     }
 
     /* ---------- Temperament ---------- */
@@ -621,8 +632,7 @@
       .sign-grid { grid-template-columns: 1fr; }
       .duo { grid-template-columns: 1fr; }
       th:nth-child(4), td:nth-child(4),
-      th:nth-child(6), td:nth-child(6),
-      th:nth-child(7), td:nth-child(7) { display: none; }
+      th:nth-child(5), td:nth-child(5) { display: none; }
       td, th { padding: 12px; }
     }
   </style>
@@ -670,21 +680,9 @@
           </div>
 
           <div class="field">
-            <label for="name">Full name</label>
-            <input type="text" id="name" name="name" placeholder="Eleanor Quinn" required />
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Eleanor" required />
             <div class="error" id="errName"></div>
-          </div>
-
-          <div class="field">
-            <label for="phone">Telephone</label>
-            <input type="tel" id="phone" name="phone" placeholder="0812345678" required />
-            <div class="error" id="errPhone"></div>
-          </div>
-
-          <div class="field">
-            <label for="email">Correspondence</label>
-            <input type="email" id="email" name="email" placeholder="you@example.com" required />
-            <div class="error" id="errEmail"></div>
           </div>
         </div>
 
@@ -704,14 +702,14 @@
             <div class="field">
               <label for="tob">Hour</label>
               <input type="time" id="tob" name="tob" />
-              <div class="help">Should it be unknown, do leave it blank.</div>
+              <div class="help">Optional — leave blank if unknown.</div>
             </div>
           </div>
 
           <div class="field">
             <label for="pob">Place</label>
-            <input type="text" id="pob" name="pob" placeholder="e.g. Bangkok, Thailand" required />
-            <div class="error" id="errPob"></div>
+            <input type="text" id="pob" name="pob" placeholder="e.g. Bangkok, Thailand" />
+            <div class="help">Optional — leave blank if unknown.</div>
           </div>
         </div>
 
@@ -750,19 +748,22 @@
           <div class="glyph">☀</div>
           <div class="role">Sun</div>
           <div class="sign-name"><span id="sunSym">♋</span> <span id="sunName">Cancer</span></div>
-          <div class="blurb">Who you are at your core.</div>
+          <div class="blurb" id="sunTrait">Tender-hearted, lunar, devoted to those they keep.</div>
+          <div class="role-note">Who you are at your core.</div>
         </div>
         <div class="sign-cell">
           <div class="glyph">☾</div>
           <div class="role">Moon</div>
           <div class="sign-name"><span id="moonSym">♏</span> <span id="moonName">Scorpio</span></div>
-          <div class="blurb">How you feel in private.</div>
+          <div class="blurb" id="moonTrait">Deep waters, fierce loyalty, secrets behind the eyes.</div>
+          <div class="role-note">How you feel in private.</div>
         </div>
         <div class="sign-cell">
           <div class="glyph">↑</div>
           <div class="role">Rising</div>
           <div class="sign-name"><span id="riseSym">♓</span> <span id="riseName">Pisces</span></div>
-          <div class="blurb">How others first see you.</div>
+          <div class="blurb" id="riseTrait">Soft-edged dreamer, swims in tides others cannot see.</div>
+          <div class="role-note">How others first see you.</div>
         </div>
       </div>
 
@@ -843,7 +844,7 @@
       <div class="toolbar">
         <div class="search">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-          <input type="text" id="searchInput" placeholder="Search name, phone, or correspondence..." />
+          <input type="text" id="searchInput" placeholder="Search name or place of birth..." />
         </div>
       </div>
 
@@ -853,8 +854,6 @@
             <tr>
               <th style="width: 32px;">№</th>
               <th>Name</th>
-              <th>Telephone</th>
-              <th>Correspondence</th>
               <th>Born</th>
               <th>Place</th>
               <th>Registered</th>
@@ -942,6 +941,21 @@
     function moonSign(y,m,d) { return pickSign(d*2 + m*3 + y).name; }
     function risingSign(y,m,d) { return pickSign(d*5 + m*7 + y*2).name; }
     function symbolOf(name) { return ZODIAC.find(z => z.name === name).symbol; }
+
+    const ZODIAC_TRAITS = {
+      Aries:       'Fire-forged and first through the door, always.',
+      Taurus:      'Grounded, sensual, with a taste for slow pleasures.',
+      Gemini:      'Quicksilver-tongued, curious, a collector of stories.',
+      Cancer:      'Tender-hearted, lunar, devoted to those they keep.',
+      Leo:         'Warm-blooded, theatrical, born to be witnessed.',
+      Virgo:       'Precise, kind, a quiet tidier of the universe.',
+      Libra:       'Diplomat and aesthete, weigher of every scale.',
+      Scorpio:     'Deep waters, fierce loyalty, secrets behind the eyes.',
+      Sagittarius: 'An arrow loosed at the horizon, gloriously aimed.',
+      Capricorn:   'Patient mountaineer, building castles to outlast you.',
+      Aquarius:    'Beautiful weirdo, future-tilted, drawn to the strange.',
+      Pisces:      'Soft-edged dreamer, swims in tides others cannot see.',
+    };
 
     const CITIES = {
       Aries:       { city: 'Florence, Italy',         vibe: 'Bold, creative, built on ancient passion — a match for your fire.' },
@@ -1056,6 +1070,9 @@
       document.getElementById('sunSym').textContent   = symbolOf(p.sun);
       document.getElementById('moonSym').textContent  = symbolOf(p.moon);
       document.getElementById('riseSym').textContent  = symbolOf(p.rise);
+      document.getElementById('sunTrait').textContent  = ZODIAC_TRAITS[p.sun];
+      document.getElementById('moonTrait').textContent = ZODIAC_TRAITS[p.moon];
+      document.getElementById('riseTrait').textContent = ZODIAC_TRAITS[p.rise];
 
       // MBTI
       document.getElementById('mbtiCode').textContent = p.mbti;
@@ -1096,38 +1113,23 @@
     /* ---------- Form ---------- */
     const form = document.getElementById('contactForm');
     function setError(id, msg) { document.getElementById(id).textContent = msg || ''; }
-    function normalizePhone(v) { return v.replace(/[-\s]/g, ''); }
-    function validatePhone(v) { return /^0\d{8,9}$/.test(normalizePhone(v)); }
-    function validateEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      ['errName','errPhone','errEmail','errDob','errPob'].forEach(id => setError(id));
+      ['errName','errDob'].forEach(id => setError(id));
 
       const name = form.name.value.trim();
-      const phone = form.phone.value.trim();
-      const email = form.email.value.trim();
       const dob = form.dob.value;
       const tob = form.tob.value;
       const pob = form.pob.value.trim();
       let ok = true;
 
-      if (name.length < 2) { setError('errName', 'Pray, enter your full name'); ok = false; }
-      if (!validatePhone(phone)) { setError('errPhone', 'A valid telephone number is required'); ok = false; }
-      if (!validateEmail(email)) { setError('errEmail', 'Invalid correspondence format'); ok = false; }
+      if (name.length < 2) { setError('errName', 'Pray, enter your name'); ok = false; }
       if (!dob) { setError('errDob', 'Please select your date of birth'); ok = false; }
-      if (pob.length < 2) { setError('errPob', 'Please enter your place of birth'); ok = false; }
       if (!ok) return;
 
       const list = load();
-      const normalized = normalizePhone(phone);
-      const dup = list.find(r => normalizePhone(r.phone || '') === normalized);
-      if (dup) {
-        setError('errPhone', `This number is already registered under "${dup.name}"`);
-        return;
-      }
-
-      const entry = { name, phone, email, dob, tob, pob, submittedAt: new Date().toISOString() };
+      const entry = { name, dob, tob, pob, submittedAt: new Date().toISOString() };
       list.push(entry);
       save(list);
 
@@ -1159,8 +1161,7 @@
       const filtered = q
         ? all.filter(r =>
             (r.name || '').toLowerCase().includes(q) ||
-            (r.phone || '').toLowerCase().includes(q) ||
-            (r.email || '').toLowerCase().includes(q))
+            (r.pob || '').toLowerCase().includes(q))
         : all;
 
       countEl.textContent = q
@@ -1175,7 +1176,7 @@
       empty.style.display = 'none';
 
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 32px; color: var(--faded); font-style: italic;">No matches for &ldquo;${escapeHtml(q)}&rdquo;</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 32px; color: var(--faded); font-style: italic;">No matches for &ldquo;${escapeHtml(q)}&rdquo;</td></tr>`;
         return;
       }
 
@@ -1186,8 +1187,6 @@
           <tr>
             <td class="muted">${i + 1}</td>
             <td class="name">${escapeHtml(r.name)}</td>
-            <td><a class="link" href="tel:${escapeHtml(r.phone)}">${escapeHtml(r.phone)}</a></td>
-            <td><a class="link" href="mailto:${escapeHtml(r.email)}">${escapeHtml(r.email)}</a></td>
             <td class="muted">${escapeHtml(born) || '—'}</td>
             <td class="muted">${escapeHtml(r.pob || '—')}</td>
             <td class="muted">${formatDate(r.submittedAt)}</td>
@@ -1221,8 +1220,8 @@
     document.getElementById('exportBtn').addEventListener('click', () => {
       const list = load();
       if (list.length === 0) { alert('No entries to export'); return; }
-      const headers = ['Name', 'Telephone', 'Correspondence', 'Date of birth', 'Time of birth', 'Place of birth', 'Registered'];
-      const rows = list.map(r => [r.name, r.phone, r.email, r.dob || '', r.tob || '', r.pob || '', formatDate(r.submittedAt)]);
+      const headers = ['Name', 'Date of birth', 'Time of birth', 'Place of birth', 'Registered'];
+      const rows = list.map(r => [r.name, r.dob || '', r.tob || '', r.pob || '', formatDate(r.submittedAt)]);
       const csv = [headers, ...rows]
         .map(row => row.map(cell => {
           const s = String(cell ?? '');
