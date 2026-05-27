@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neko · The Cabinet of Curiosities</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    :root {
+      --parchment: #ece3cd;
+      --paper:     #f5ecd6;
+      --ink:       #1f1a13;
+      --ink-soft:  #3a2e22;
+      --faded:     #846f53;
+      --rule:      #c9b88f;
+      --rule-soft: #ddc9a0;
+      --botanical: #4f6d4a;
+      --gold:      #a17e3a;
+      --oxblood:   #7c2b1d;
+      --display:   'IM Fell English', 'Cormorant Garamond', Georgia, serif;
+      --display-sc:'IM Fell English SC', 'IM Fell English', Georgia, serif;
+      --body:      'Cormorant Garamond', Georgia, serif;
+      --sans:      'Inter', -apple-system, 'Helvetica Neue', sans-serif;
+    }
+    body {
+      font-family: var(--body);
+      background:
+        radial-gradient(ellipse at top, rgba(255,247,220,0.6), transparent 60%),
+        radial-gradient(ellipse at bottom right, rgba(180,150,90,0.08), transparent 50%),
+        var(--parchment);
+      color: var(--ink);
+      margin: 0;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      font-size: 17px;
+    }
+
+    /* ---------- Topbar ---------- */
+    .topbar {
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      border-bottom: 1px double var(--rule);
+      background: rgba(245,236,214,0.6);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--display);
+      font-style: italic;
+      font-size: 24px;
+      letter-spacing: 0.01em;
+      color: var(--ink);
+    }
+    .brand .paw { color: var(--oxblood); display: flex; }
+    .issue {
+      font-family: var(--display-sc);
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      color: var(--faded);
+      text-transform: uppercase;
+      padding-left: 14px;
+      border-left: 1px solid var(--rule);
+      align-self: center;
+    }
+    .tabs { display: flex; gap: 6px; margin-left: auto; }
+    .tab {
+      padding: 7px 16px;
+      font-family: var(--display-sc);
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border: 1px solid var(--ink);
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tab:hover { background: var(--ink); color: var(--paper); }
+    .tab.active { background: var(--ink); color: var(--paper); }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ---------- Card frame ---------- */
+    #view-form { padding: 60px 24px; }
+    #view-form.active { display: flex; justify-content: center; }
+    .card {
+      background: var(--paper);
+      width: 100%;
+      max-width: 540px;
+      padding: 52px 46px;
+      border: 1px solid var(--ink);
+      outline: 1px solid var(--ink);
+      outline-offset: 6px;
+      position: relative;
+      animation: fadeIn 0.5s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .corner {
+      position: absolute;
+      font-size: 16px;
+      color: var(--gold);
+      line-height: 1;
+      pointer-events: none;
+    }
+    .corner.tl { top: 10px; left: 12px; }
+    .corner.tr { top: 10px; right: 12px; transform: scaleX(-1); }
+    .corner.bl { bottom: 10px; left: 12px; transform: scaleY(-1); }
+    .corner.br { bottom: 10px; right: 12px; transform: scale(-1, -1); }
+
+    /* ---------- Form headings ---------- */
+    .eyebrow {
+      font-family: var(--display-sc);
+      font-size: 11px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--oxblood);
+      text-align: center;
+      margin-bottom: 14px;
+    }
+    h1 {
+      margin: 0 0 12px;
+      font-family: var(--display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 44px;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      text-align: center;
+      color: var(--ink);
+    }
+    p.subtitle {
+      margin: 0 0 28px;
+      color: var(--faded);
+      font-size: 16px;
+      line-height: 1.55;
+      text-align: center;
+      font-style: italic;
+      font-family: var(--display);
+    }
+    .crest {
+      text-align: center;
+      font-size: 16px;
+      color: var(--gold);
+      letter-spacing: 0.5em;
+      margin: 4px 0 18px;
+    }
+
+    /* ---------- Divider ---------- */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: var(--gold);
+      margin: 26px 0 22px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      border-top: 1px solid var(--rule);
+    }
+    .divider .glyph { font-size: 14px; line-height: 1; }
+
+    /* ---------- Section ---------- */
+    .section { margin-bottom: 30px; }
+    .section-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 18px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--ink);
+    }
+    .section-label .title {
+      font-family: var(--display);
+      font-style: italic;
+      font-size: 20px;
+      color: var(--ink);
+    }
+    .section-label .num {
+      font-family: var(--display-sc);
+      font-size: 11px;
+      letter-spacing: 0.24em;
+      color: var(--faded);
+    }
+
+    /* ---------- Inputs ---------- */
+    label {
+      display: block;
+      font-family: var(--display-sc);
+      font-size: 11px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 8px;
+    }
+    input {
+      width: 100%;
+      padding: 8px 0;
+      font-family: var(--body);
+      font-size: 17px;
+      border: none;
+      border-bottom: 1px solid var(--ink-soft);
+      outline: none;
+      background: transparent;
+      color: var(--ink);
+      transition: border-color 0.15s;
+    }
+    input::placeholder {
+      color: var(--faded);
+      font-style: italic;
+      opacity: 0.7;
+    }
+    input:hover { border-bottom-color: var(--ink); }
+    input:focus { border-bottom-color: var(--oxblood); }
+    input[type="date"], input[type="time"] { font-family: var(--body); }
+    .field { margin-bottom: 22px; }
+    .field:last-of-type { margin-bottom: 0; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .help {
+      font-size: 14px;
+      color: var(--faded);
+      margin-top: 6px;
+      font-style: italic;
+    }
+    .error {
+      color: var(--oxblood);
+      font-size: 13px;
+      margin-top: 6px;
+      min-height: 16px;
+      font-style: italic;
+    }
+
+    /* ---------- Submit ---------- */
+    .submit {
+      width: 100%;
+      padding: 14px;
+      font-family: var(--display-sc);
+      font-size: 13px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--paper);
+      background: var(--ink);
+      border: 1px solid var(--ink);
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-top: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .submit:hover { background: var(--oxblood); border-color: var(--oxblood); }
+
+    /* ---------- Birth chart ---------- */
+    .portrait {
+      width: 140px;
+      height: 160px;
+      margin: 0 auto 16px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink);
+    }
+    .portrait::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 1.2px solid var(--ink);
+      border-radius: 50% / 58%;
+    }
+    .portrait::after {
+      content: '';
+      position: absolute;
+      inset: 5px;
+      border: 0.8px solid var(--ink);
+      border-radius: 50% / 58%;
+    }
+    .portrait svg { position: relative; z-index: 1; }
+
+    .character-name {
+      font-family: var(--display);
+      font-style: italic;
+      font-size: 30px;
+      text-align: center;
+      margin: 0 0 8px;
+      line-height: 1.1;
+      color: var(--ink);
+    }
+    .character-sub {
+      font-family: var(--display-sc);
+      font-size: 11px;
+      letter-spacing: 0.32em;
+      text-align: center;
+      color: var(--oxblood);
+      margin-bottom: 6px;
+    }
+    .character-stats {
+      text-align: center;
+      font-style: italic;
+      color: var(--faded);
+      margin-bottom: 0;
+      font-size: 15px;
+    }
+
+    .sign-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 6px 0 0;
+    }
+    .sign-cell {
+      background: rgba(255,247,220,0.5);
+      border: 1px solid var(--rule);
+      padding: 22px 10px 18px;
+      text-align: center;
+    }
+    .sign-cell .glyph {
+      font-size: 24px;
+      color: var(--oxblood);
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .sign-cell .role {
+      font-family: var(--display-sc);
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--faded);
+      margin-bottom: 6px;
+    }
+    .sign-cell .sign-name {
+      font-family: var(--display);
+      font-style: italic;
+      font-size: 19px;
+      margin-bottom: 8px;
+      line-height: 1.1;
+    }
+    .sign-cell .blurb {
+      font-style: italic;
+      font-size: 13px;
+      line-height: 1.35;
+      color: var(--faded);
+    }
+
+    /* ---------- Temperament ---------- */
+    .temperament {
+      text-align: center;
+      padding: 4px 0;
+    }
+    .temperament .mbti {
+      font-family: var(--display);
+      font-style: italic;
+      font-size: 48px;
+      letter-spacing: 0.06em;
+      color: var(--oxblood);
+      line-height: 1;
+      margin: 4px 0 6px;
+    }
+    .temperament .mbti-name {
+      font-family: var(--display);
+      font-style: italic;
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+    .temperament .mbti-desc {
+      font-style: italic;
+      color: var(--faded);
+      font-size: 15px;
+      line-height: 1.55;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    /* ---------- Confidants & adversaries ---------- */
+    .duo {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .duo-card {
+      border: 1px solid var(--rule);
+      padding: 22px 16px 18px;
+      text-align: center;
+      background: rgba(255,247,220,0.5);
+    }
+    .duo-card .duo-label {
+      font-family: var(--display-sc);
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--oxblood);
+      margin-bottom: 12px;
+    }
+    .duo-card .duo-icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 10px;
+      color: var(--ink);
+    }
+    .duo-card .duo-mbti {
+      font-family: var(--display-sc);
+      font-size: 13px;
+      letter-spacing: 0.32em;
+      color: var(--faded);
+      margin-bottom: 4px;
+    }
+    .duo-card .duo-name {
+      font-family: var(--display);
+      font-style: italic;
+      font-size: 17px;
+      line-height: 1.15;
+    }
+
+    /* ---------- City ---------- */
+    .city-card {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 30px 28px;
+      text-align: center;
+      position: relative;
+      border: 1px solid var(--ink);
+      outline: 1px solid var(--ink);
+      outline-offset: 4px;
+      margin: 12px 8px 0;
+    }
+    .city-card .role {
+      font-family: var(--display-sc);
+      font-size: 11px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 14px;
+    }
+    .city-card .city-name {
+      font-family: var(--display);
+      font-style: italic;
+      font-size: 30px;
+      letter-spacing: -0.01em;
+      margin-bottom: 12px;
+      line-height: 1.1;
+    }
+    .city-card .city-vibe {
+      font-family: var(--display);
+      font-style: italic;
+      font-size: 16px;
+      line-height: 1.55;
+      color: #d6c9a3;
+      margin: 0;
+    }
+
+    .restart {
+      width: 100%;
+      padding: 13px;
+      font-family: var(--display-sc);
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ink);
+      background: transparent;
+      border: 1px solid var(--ink);
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-top: 22px;
+    }
+    .restart:hover { background: var(--ink); color: var(--paper); }
+
+    /* ---------- Admin view ---------- */
+    #view-admin { padding: 40px 24px; }
+    .container { max-width: 1040px; margin: 0 auto; }
+    .admin-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 26px;
+      flex-wrap: wrap;
+      padding-bottom: 14px;
+      border-bottom: 1px double var(--rule);
+    }
+    .title-block { display: flex; align-items: center; gap: 14px; }
+    .title-block .paw { color: var(--oxblood); display: flex; }
+    .admin-header h1 {
+      text-align: left;
+      font-size: 38px;
+      margin: 0;
+    }
+    .count {
+      color: var(--faded);
+      font-size: 15px;
+      margin-top: 4px;
+      margin-left: 34px;
+      font-style: italic;
+    }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn {
+      padding: 9px 16px;
+      font-family: var(--display-sc);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 1px solid var(--ink);
+      background: transparent;
+      color: var(--ink);
+    }
+    .btn:hover { background: var(--ink); color: var(--paper); }
+    .btn.danger { color: var(--oxblood); border-color: var(--oxblood); }
+    .btn.danger:hover { background: var(--oxblood); color: var(--paper); }
+
+    .toolbar {
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      padding: 12px;
+      margin-bottom: 18px;
+    }
+    .search { position: relative; }
+    .search input {
+      width: 100%;
+      padding: 10px 12px 10px 36px;
+      font-size: 16px;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--rule);
+      font-style: italic;
+    }
+    .search input:focus { border-bottom-color: var(--oxblood); }
+    .search svg {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--faded);
+    }
+
+    .table-wrap {
+      background: var(--paper);
+      border: 1px solid var(--rule);
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 15px; }
+    th {
+      text-align: left;
+      padding: 14px 16px;
+      font-family: var(--display-sc);
+      font-size: 10px;
+      color: var(--faded);
+      text-transform: uppercase;
+      letter-spacing: 0.24em;
+      background: rgba(255,247,220,0.5);
+      border-bottom: 1px solid var(--ink);
+    }
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--rule-soft);
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tbody tr { transition: background 0.1s; }
+    tbody tr:hover { background: rgba(255,247,220,0.5); }
+    .name {
+      font-family: var(--display);
+      font-style: italic;
+      font-size: 18px;
+    }
+    .muted { color: var(--faded); font-size: 14px; font-style: italic; }
+    .row-action {
+      padding: 5px 10px;
+      font-family: var(--display-sc);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--oxblood);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+    .row-action:hover { background: var(--oxblood); color: var(--paper); border-color: var(--oxblood); }
+    a.link {
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1px dashed var(--rule);
+    }
+    a.link:hover { border-bottom-color: var(--oxblood); color: var(--oxblood); }
+
+    .empty {
+      padding: 64px 24px 72px;
+      text-align: center;
+      color: var(--faded);
+    }
+    .empty .cat-big { margin-bottom: 20px; color: var(--rule); }
+    .empty .big {
+      font-family: var(--display);
+      font-style: italic;
+      font-size: 26px;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+    .empty a { color: var(--oxblood); text-decoration: none; cursor: pointer; font-style: italic; }
+    .empty a:hover { text-decoration: underline; }
+
+    @media (max-width: 640px) {
+      .topbar { padding: 14px 16px; gap: 10px; }
+      .issue { display: none; }
+      #view-admin { padding: 24px 12px; }
+      #view-form { padding: 32px 12px; }
+      .card { padding: 36px 24px; }
+      h1 { font-size: 32px; }
+      .character-name { font-size: 24px; }
+      .row { grid-template-columns: 1fr; gap: 0; }
+      .sign-grid { grid-template-columns: 1fr; }
+      .duo { grid-template-columns: 1fr; }
+      th:nth-child(4), td:nth-child(4),
+      th:nth-child(6), td:nth-child(6),
+      th:nth-child(7), td:nth-child(7) { display: none; }
+      td, th { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <span class="paw" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+          <ellipse cx="6"  cy="11" rx="2"   ry="2.6"/>
+          <ellipse cx="18" cy="11" rx="2"   ry="2.6"/>
+          <ellipse cx="9"  cy="6"  rx="1.9" ry="2.5"/>
+          <ellipse cx="15" cy="6"  rx="1.9" ry="2.5"/>
+          <path d="M12 11 c-3 0 -5 2.5 -5 5 c0 2.2 1.8 3.5 3.5 3.5 c0.9 0 1 -0.5 1.5 -0.5 s0.6 0.5 1.5 0.5 c1.7 0 3.5 -1.3 3.5 -3.5 c0 -2.5 -2 -5 -5 -5 z"/>
+        </svg>
+      </span>
+      <span>Neko &amp; Co.</span>
+    </div>
+    <div class="issue">Cabinet of Curiosities · Vol. I</div>
+    <div class="tabs">
+      <button class="tab active" data-view="form">The Form</button>
+      <button class="tab" data-view="admin">The Ledger</button>
+    </div>
+  </div>
+
+  <!-- ===== FORM VIEW ===== -->
+  <div id="view-form" class="view active">
+    <!-- Form card -->
+    <div class="card" id="formCard">
+      <span class="corner tl">❦</span>
+      <span class="corner tr">❦</span>
+      <span class="corner bl">❦</span>
+      <span class="corner br">❦</span>
+
+      <div class="eyebrow">An Apothecary's Form</div>
+      <h1>Pray, tell us<br/>about yourself.</h1>
+      <p class="subtitle">Leave your particulars and the cabinet shall reveal a curious character of your own.</p>
+      <div class="crest">✦ ✦ ✦</div>
+
+      <form id="contactForm" novalidate>
+        <div class="section">
+          <div class="section-label">
+            <span class="title">Of Particulars</span>
+            <span class="num">Section i</span>
+          </div>
+
+          <div class="field">
+            <label for="name">Full name</label>
+            <input type="text" id="name" name="name" placeholder="Eleanor Quinn" required />
+            <div class="error" id="errName"></div>
+          </div>
+
+          <div class="field">
+            <label for="phone">Telephone</label>
+            <input type="tel" id="phone" name="phone" placeholder="0812345678" required />
+            <div class="error" id="errPhone"></div>
+          </div>
+
+          <div class="field">
+            <label for="email">Correspondence</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" required />
+            <div class="error" id="errEmail"></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-label">
+            <span class="title">Of Birth</span>
+            <span class="num">Section ii</span>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="dob">Date</label>
+              <input type="date" id="dob" name="dob" required />
+              <div class="error" id="errDob"></div>
+            </div>
+
+            <div class="field">
+              <label for="tob">Hour</label>
+              <input type="time" id="tob" name="tob" />
+              <div class="help">Should it be unknown, do leave it blank.</div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="pob">Place</label>
+            <input type="text" id="pob" name="pob" placeholder="e.g. Bangkok, Thailand" required />
+            <div class="error" id="errPob"></div>
+          </div>
+        </div>
+
+        <button type="submit" class="submit">
+          <span>Submit for Inspection</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+          </svg>
+        </button>
+      </form>
+    </div>
+
+    <!-- Birth chart result card -->
+    <div class="card" id="chartCard" hidden>
+      <span class="corner tl">❦</span>
+      <span class="corner tr">❦</span>
+      <span class="corner bl">❦</span>
+      <span class="corner br">❦</span>
+
+      <div class="eyebrow">An Apothecary's Reading</div>
+      <div class="crest">✦ ✦ ✦</div>
+
+      <div class="portrait" id="portrait"></div>
+      <div class="character-sub" id="characterSub">Your Character</div>
+      <h2 class="character-name" id="characterName">The Velvet Cartographer</h2>
+      <p class="character-stats" id="characterStats">For Jane, born March 15, 1995</p>
+
+      <div class="divider"><span class="glyph">❦</span></div>
+
+      <div class="section-label">
+        <span class="title">Of the Heavens</span>
+        <span class="num">i.</span>
+      </div>
+      <div class="sign-grid">
+        <div class="sign-cell">
+          <div class="glyph">☀</div>
+          <div class="role">Sun</div>
+          <div class="sign-name"><span id="sunSym">♋</span> <span id="sunName">Cancer</span></div>
+          <div class="blurb">Who you are at your core.</div>
+        </div>
+        <div class="sign-cell">
+          <div class="glyph">☾</div>
+          <div class="role">Moon</div>
+          <div class="sign-name"><span id="moonSym">♏</span> <span id="moonName">Scorpio</span></div>
+          <div class="blurb">How you feel in private.</div>
+        </div>
+        <div class="sign-cell">
+          <div class="glyph">↑</div>
+          <div class="role">Rising</div>
+          <div class="sign-name"><span id="riseSym">♓</span> <span id="riseName">Pisces</span></div>
+          <div class="blurb">How others first see you.</div>
+        </div>
+      </div>
+
+      <div class="divider"><span class="glyph">❧</span></div>
+
+      <div class="section-label">
+        <span class="title">Of Temperament</span>
+        <span class="num">ii.</span>
+      </div>
+      <div class="temperament">
+        <div class="mbti" id="mbtiCode">INFP</div>
+        <div class="mbti-name" id="mbtiName">The Mediator</div>
+        <p class="mbti-desc" id="mbtiDesc">A dreamer with ink-stained fingers and a quiet, mossy heart.</p>
+      </div>
+
+      <div class="divider"><span class="glyph">✦</span></div>
+
+      <div class="section-label">
+        <span class="title">Confidants &amp; Adversaries</span>
+        <span class="num">iii.</span>
+      </div>
+      <div class="duo">
+        <div class="duo-card">
+          <div class="duo-label">A Kindred Spirit</div>
+          <div class="duo-icon" id="matchIcon"></div>
+          <div class="duo-mbti" id="matchMbti">ENTJ</div>
+          <div class="duo-name" id="matchName">The Iron Conductor</div>
+        </div>
+        <div class="duo-card">
+          <div class="duo-label">A Worthy Adversary</div>
+          <div class="duo-icon" id="rivalIcon"></div>
+          <div class="duo-mbti" id="rivalMbti">ESFP</div>
+          <div class="duo-name" id="rivalName">The Carnival Lantern</div>
+        </div>
+      </div>
+
+      <div class="divider"><span class="glyph">☙</span></div>
+
+      <div class="section-label">
+        <span class="title">Where the Heart Wanders</span>
+        <span class="num">iv.</span>
+      </div>
+      <div class="city-card">
+        <div class="role">Your soul city</div>
+        <div class="city-name" id="cityName">Lisbon, Portugal</div>
+        <p class="city-vibe" id="cityVibe">A city that knows your rhythm.</p>
+      </div>
+
+      <button class="restart" id="restartBtn">Submit Another Soul</button>
+    </div>
+  </div>
+
+  <!-- ===== ADMIN VIEW ===== -->
+  <div id="view-admin" class="view">
+    <div class="container">
+      <div class="admin-header">
+        <div>
+          <div class="title-block">
+            <span class="paw" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <ellipse cx="6"  cy="11" rx="2"   ry="2.6"/>
+                <ellipse cx="18" cy="11" rx="2"   ry="2.6"/>
+                <ellipse cx="9"  cy="6"  rx="1.9" ry="2.5"/>
+                <ellipse cx="15" cy="6"  rx="1.9" ry="2.5"/>
+                <path d="M12 11 c-3 0 -5 2.5 -5 5 c0 2.2 1.8 3.5 3.5 3.5 c0.9 0 1 -0.5 1.5 -0.5 s0.6 0.5 1.5 0.5 c1.7 0 3.5 -1.3 3.5 -3.5 c0 -2.5 -2 -5 -5 -5 z"/>
+              </svg>
+            </span>
+            <h1>The Ledger</h1>
+          </div>
+          <div class="count" id="count">0 entries</div>
+        </div>
+        <div class="actions">
+          <button class="btn" id="exportBtn">Export CSV</button>
+          <button class="btn danger" id="clearBtn">Clear All</button>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" id="searchInput" placeholder="Search name, phone, or correspondence..." />
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table id="dataTable">
+          <thead>
+            <tr>
+              <th style="width: 32px;">№</th>
+              <th>Name</th>
+              <th>Telephone</th>
+              <th>Correspondence</th>
+              <th>Born</th>
+              <th>Place</th>
+              <th>Registered</th>
+              <th style="width: 80px;"></th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <div class="empty" id="empty" style="display: none;">
+          <div class="cat-big" aria-hidden="true">
+            <svg width="120" height="64" viewBox="0 0 120 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M36 26 L42 12 L48 26"/>
+              <path d="M72 26 L78 12 L84 26"/>
+              <path d="M20 58 C20 32 40 24 60 24 C80 24 100 32 100 58 Z"/>
+              <path d="M46 38 q4 3 8 0"/>
+              <path d="M66 38 q4 3 8 0"/>
+              <path d="M59 43 q1.5 1.6 3 0"/>
+              <path d="M30 43 L42 43 M30 47 L42 46"/>
+              <path d="M90 43 L78 43 M90 47 L78 46"/>
+              <path d="M100 55 q9 -3 9 -10 q0 -5 -6 -5"/>
+            </svg>
+          </div>
+          <div class="big">The cabinet awaits.</div>
+          <div>Begin with the <a id="goForm">form</a>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const KEY = 'submissions';
+
+    /* ---------- Tabs ---------- */
+    const tabs = document.querySelectorAll('.tab');
+    const views = document.querySelectorAll('.view');
+    function switchView(name) {
+      tabs.forEach(t => t.classList.toggle('active', t.dataset.view === name));
+      views.forEach(v => v.classList.toggle('active', v.id === `view-${name}`));
+      if (name === 'admin') render();
+    }
+    tabs.forEach(t => t.addEventListener('click', () => switchView(t.dataset.view)));
+    document.getElementById('goForm').addEventListener('click', () => switchView('form'));
+
+    /* ---------- Storage ---------- */
+    let submissions = [];
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) submissions = JSON.parse(raw);
+    } catch (e) {}
+    function load() { return submissions; }
+    function save(list) {
+      submissions = list;
+      try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) {}
+    }
+
+    /* ---------- Astrology ---------- */
+    const ZODIAC = [
+      { name: 'Aries',       symbol: '♈' },
+      { name: 'Taurus',      symbol: '♉' },
+      { name: 'Gemini',      symbol: '♊' },
+      { name: 'Cancer',      symbol: '♋' },
+      { name: 'Leo',         symbol: '♌' },
+      { name: 'Virgo',       symbol: '♍' },
+      { name: 'Libra',       symbol: '♎' },
+      { name: 'Scorpio',     symbol: '♏' },
+      { name: 'Sagittarius', symbol: '♐' },
+      { name: 'Capricorn',   symbol: '♑' },
+      { name: 'Aquarius',    symbol: '♒' },
+      { name: 'Pisces',      symbol: '♓' },
+    ];
+    const SUN_CUTOFFS = [
+      [1, 20, 'Aquarius'], [2, 19, 'Pisces'], [3, 21, 'Aries'],
+      [4, 20, 'Taurus'],   [5, 21, 'Gemini'], [6, 21, 'Cancer'],
+      [7, 23, 'Leo'],      [8, 23, 'Virgo'],  [9, 23, 'Libra'],
+      [10, 23, 'Scorpio'], [11, 22, 'Sagittarius'], [12, 22, 'Capricorn'],
+    ];
+    function sunSign(month, day) {
+      for (let i = SUN_CUTOFFS.length - 1; i >= 0; i--) {
+        const [m, d, s] = SUN_CUTOFFS[i];
+        if (month > m || (month === m && day >= d)) return s;
+      }
+      return 'Capricorn';
+    }
+    function pickSign(i) { return ZODIAC[((i % 12) + 12) % 12]; }
+    function moonSign(y,m,d) { return pickSign(d*2 + m*3 + y).name; }
+    function risingSign(y,m,d) { return pickSign(d*5 + m*7 + y*2).name; }
+    function symbolOf(name) { return ZODIAC.find(z => z.name === name).symbol; }
+
+    const CITIES = {
+      Aries:       { city: 'Florence, Italy',         vibe: 'Bold, creative, built on ancient passion — a match for your fire.' },
+      Taurus:      { city: 'Kyoto, Japan',            vibe: 'Slow seasons, tea, and gardens. Beauty rewards your patience here.' },
+      Gemini:      { city: 'Lisbon, Portugal',        vibe: 'Hilly streets, endless café chatter. Your mind never gets bored.' },
+      Cancer:      { city: 'Reykjavík, Iceland',      vibe: 'Water everywhere, soft light, room to nest. You feel held here.' },
+      Leo:         { city: 'Marrakech, Morocco',      vibe: 'Sun-soaked, theatrical, alive. A city built around personality.' },
+      Virgo:       { city: 'Copenhagen, Denmark',     vibe: 'Bike lanes, design, quiet order. Your eye for detail is finally seen.' },
+      Libra:       { city: 'Paris, France',           vibe: 'Beauty in every window. Balance and conversation — your native tongue.' },
+      Scorpio:     { city: 'Istanbul, Türkiye',       vibe: 'Layered, ancient, mysterious. A city of depth, just like you.' },
+      Sagittarius: { city: 'Buenos Aires, Argentina', vibe: 'Late nights, tango, restless wandering. Your spirit already lives here.' },
+      Capricorn:   { city: 'Zürich, Switzerland',     vibe: 'Precision, mountains, mastery. A city that respects discipline.' },
+      Aquarius:    { city: 'Berlin, Germany',         vibe: 'Rebels, experiments, futures built tonight. You belong with the strange ones.' },
+      Pisces:      { city: 'Ubud, Indonesia',         vibe: 'Rice fields, devotion, dreamy mornings. Your soul softens here.' },
+    };
+
+    /* ---------- MBTI Characters ---------- */
+    const MBTI_LIST = ['INTJ','INTP','ENTJ','ENTP','INFJ','INFP','ENFJ','ENFP','ISTJ','ISFJ','ESTJ','ESFJ','ISTP','ISFP','ESTP','ESFP'];
+
+    const CHARACTERS = {
+      INTJ: { name: 'The Architect of Constellations', icon: 'compass',  blurb: 'A quiet strategist drawing maps no one else has seen yet.' },
+      INTP: { name: 'The Glass-Eyed Inventor',         icon: 'glass',    blurb: 'Lives inside ideas, forgets to come up for tea.' },
+      ENTJ: { name: 'The Iron Conductor',              icon: 'crown',    blurb: 'Builds empires before breakfast, charmingly.' },
+      ENTP: { name: 'The Match-Strike Magician',       icon: 'match',    blurb: 'Lights a debate, leaves before the smoke clears.' },
+      INFJ: { name: 'The Lantern-Bearer',              icon: 'lantern',  blurb: 'Walks ahead in the dark so others can see the path.' },
+      INFP: { name: 'The Velvet Cartographer',         icon: 'scroll',   blurb: 'A dreamer with ink-stained fingers and a mossy heart.' },
+      ENFJ: { name: 'The Moth Tamer',                  icon: 'moth',     blurb: 'Draws people toward warmth they didn’t know they needed.' },
+      ENFP: { name: 'The Comet Catcher',               icon: 'comet',    blurb: 'Bright, brief, and impossible not to follow.' },
+      ISTJ: { name: 'The Keeper of Hours',             icon: 'watch',    blurb: 'Steady as a metronome, twice as reliable.' },
+      ISFJ: { name: 'The Tea-Light Guardian',          icon: 'teacup',   blurb: 'Quiet kindness that warms an entire room.' },
+      ESTJ: { name: 'The Steamship Captain',           icon: 'anchor',   blurb: 'Hands on the wheel, eyes on the horizon, on schedule.' },
+      ESFJ: { name: 'The Garden Hostess',              icon: 'flowerpot',blurb: 'Remembers your birthday and your favourite biscuit.' },
+      ISTP: { name: 'The Brass Whisperer',             icon: 'key',      blurb: 'Can fix anything, including the silence.' },
+      ISFP: { name: 'The Pressed-Flower Wanderer',     icon: 'flower',   blurb: 'Carries small beauties in their pocket, wherever they go.' },
+      ESTP: { name: 'The Acrobat of Sparks',           icon: 'starburst',blurb: 'Lives now, plans later, lands on their feet.' },
+      ESFP: { name: 'The Carnival Lantern',            icon: 'carnival', blurb: 'Brings the party with them, even to Tuesdays.' },
+    };
+
+    const MATCH = {
+      INTJ:'ENFP', ENFP:'INTJ', INTP:'ENFJ', ENFJ:'INTP',
+      ENTJ:'INFP', INFP:'ENTJ', ENTP:'INFJ', INFJ:'ENTP',
+      ISTJ:'ESFP', ESFP:'ISTJ', ISFJ:'ESTP', ESTP:'ISFJ',
+      ESTJ:'ISFP', ISFP:'ESTJ', ESFJ:'ISTP', ISTP:'ESFJ',
+    };
+    function flipMBTI(t) {
+      const flip = { I:'E', E:'I', S:'N', N:'S', T:'F', F:'T', J:'P', P:'J' };
+      return [...t].map(c => flip[c]).join('');
+    }
+
+    /* ---------- Icon library (line-art, Hendrick’s-ish) ---------- */
+    const ICONS = {
+      compass:   `<g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><line x1="40" y1="22" x2="25" y2="62"/><line x1="40" y1="22" x2="55" y2="62"/><circle cx="40" cy="22" r="2.5" fill="currentColor"/><path d="M30 52 q10 -4 20 0"/><circle cx="16" cy="32" r="1" fill="currentColor"/><circle cx="64" cy="38" r="1" fill="currentColor"/><circle cx="60" cy="60" r="1" fill="currentColor"/></g>`,
+      glass:     `<g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32" r="14"/><line x1="42" y1="42" x2="60" y2="60"/><circle cx="32" cy="32" r="6" stroke-dasharray="2 2"/><circle cx="62" cy="22" r="3"/><line x1="62" y1="17" x2="62" y2="14"/><line x1="62" y1="27" x2="62" y2="30"/></g>`,
+      crown:     `<g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 38 L20 18 L32 30 L40 12 L48 30 L60 18 L60 38 Z"/><line x1="20" y1="42" x2="60" y2="42"/><circle cx="32" cy="22" r="1.5" fill="currentColor"/><circle cx="40" cy="18" r="1.8" fill="currentColor"/><circle cx="48" cy="22" r="1.5" fill="currentColor"/></g>`,
+      match:     `<g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><line x1="40" y1="36" x2="40" y2="68"/><ellipse cx="40" cy="34" rx="3" ry="4" fill="currentColor"/><path d="M40 26 q-6 -8 0 -16 q6 8 0 16 Z"/><path d="M40 18 q-2.5 -4 0 -8"/><circle cx="22" cy="20" r="0.8" fill="currentColor"/><circle cx="58" cy="22" r="0.8" fill="currentColor"/></g>`,
+      lantern:   `<g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M33 14 q4 -6 8 0"/><line x1="27" y1="20" x2="53" y2="20"/><rect x="30" y="22" width="20" height="30" rx="1"/><line x1="40" y1="28" x2="40" y2="46" stroke-dasharray="2 2"/><line x1="28" y1="54" x2="52" y2="54"/><line x1="30" y1="58" x2="50" y2="58"/></g>`,
+      scroll:    `<g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="32" x2="62" y2="32"/><line x1="18" y1="48" x2="62" y2="48"/><ellipse cx="18" cy="40" rx="5" ry="9"/><ellipse cx="62" cy="40" rx="5" ry="9"/><circle cx="32" cy="40" r="1.5" fill="currentColor"/><path d="M32 40 q6 4 16 -1"/><path d="M28 44 q8 3 18 -1"/></g>`,
+      moth:      `<g fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="40" cy="44" rx="1.5" ry="11" fill="currentColor"/><path d="M38 38 q-20 -8 -24 5 q5 7 24 4"/><path d="M42 38 q20 -8 24 5 q-5 7 -24 4"/><path d="M38 50 q-16 5 -18 14 q9 0 18 -5"/><path d="M42 50 q16 5 18 14 q-9 0 -18 -5"/><line x1="38" y1="33" x2="34" y2="26"/><line x1="42" y1="33" x2="46" y2="26"/></g>`,
+      comet:     `<g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="58" cy="22" r="4.5"/><line x1="52" y1="27" x2="22" y2="58"/><line x1="56" y1="30" x2="28" y2="55"/><line x1="50" y1="22" x2="20" y2="48"/><circle cx="70" cy="16" r="1" fill="currentColor"/><circle cx="66" cy="38" r="1" fill="currentColor"/></g>`,
+      watch:     `<g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="40" cy="44" r="20"/><rect x="37" y="16" width="6" height="8"/><line x1="42" y1="14" x2="38" y2="14"/><line x1="40" y1="44" x2="40" y2="32"/><line x1="40" y1="44" x2="49" y2="48"/><circle cx="40" cy="44" r="1.5" fill="currentColor"/><line x1="40" y1="27" x2="40" y2="30"/><line x1="56" y1="44" x2="59" y2="44"/></g>`,
+      teacup:    `<g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 42 L20 56 q0 6 6 6 L46 62 q6 0 6 -6 L52 42 Z"/><path d="M52 46 q9 0 9 6 q0 6 -9 6"/><line x1="18" y1="42" x2="54" y2="42"/><ellipse cx="36" cy="68" rx="22" ry="2"/><path d="M30 38 q-3 -4 0 -8"/><path d="M40 38 q3 -4 0 -8"/><path d="M50 38 q-3 -4 0 -8"/></g>`,
+      anchor:    `<g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="40" cy="18" r="4"/><line x1="40" y1="22" x2="40" y2="58"/><line x1="28" y1="30" x2="52" y2="30"/><path d="M40 58 q-15 -3 -18 -14"/><path d="M40 58 q15 -3 18 -14"/><path d="M22 44 L19 41 L24 40"/><path d="M58 44 L61 41 L56 40"/></g>`,
+      flowerpot: `<g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M30 48 L50 48 L48 64 L32 64 Z"/><line x1="28" y1="48" x2="52" y2="48"/><line x1="40" y1="48" x2="40" y2="28"/><path d="M40 40 q-9 -2 -10 -8"/><path d="M40 36 q9 -2 10 -8"/><circle cx="40" cy="22" r="3"/><circle cx="34" cy="22" r="3"/><circle cx="46" cy="22" r="3"/><circle cx="37" cy="16" r="3"/><circle cx="43" cy="16" r="3"/></g>`,
+      key:       `<g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="40" r="9"/><circle cx="24" cy="40" r="3" fill="currentColor"/><line x1="33" y1="40" x2="62" y2="40"/><line x1="52" y1="40" x2="52" y2="48"/><line x1="58" y1="40" x2="58" y2="50"/><line x1="62" y1="40" x2="62" y2="46"/></g>`,
+      flower:    `<g fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="40" cy="22" rx="4" ry="7"/><ellipse cx="40" cy="38" rx="7" ry="4" transform="rotate(45 40 38)"/><ellipse cx="40" cy="38" rx="7" ry="4" transform="rotate(-45 40 38)"/><circle cx="40" cy="30" r="2.5" fill="currentColor"/><line x1="40" y1="45" x2="40" y2="66"/><path d="M40 56 q-8 0 -10 -5"/><path d="M40 60 q8 0 10 -5"/></g>`,
+      starburst: `<g fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><line x1="40" y1="12" x2="40" y2="28"/><line x1="40" y1="52" x2="40" y2="68"/><line x1="12" y1="40" x2="28" y2="40"/><line x1="52" y1="40" x2="68" y2="40"/><line x1="20" y1="20" x2="30" y2="30"/><line x1="50" y1="50" x2="60" y2="60"/><line x1="20" y1="60" x2="30" y2="50"/><line x1="50" y1="30" x2="60" y2="20"/><circle cx="40" cy="40" r="5"/></g>`,
+      carnival:  `<g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M33 14 q5 -6 10 0"/><line x1="28" y1="20" x2="52" y2="20"/><ellipse cx="40" cy="42" rx="13" ry="18"/><line x1="27" y1="42" x2="53" y2="42"/><line x1="33" y1="26" x2="47" y2="26"/><line x1="33" y1="58" x2="47" y2="58"/><circle cx="18" cy="22" r="0.9" fill="currentColor"/><circle cx="62" cy="28" r="0.9" fill="currentColor"/><circle cx="22" cy="60" r="0.9" fill="currentColor"/><circle cx="60" cy="60" r="0.9" fill="currentColor"/></g>`,
+    };
+
+    function iconSvg(key, size) {
+      return `<svg width="${size}" height="${size}" viewBox="0 0 80 80">${ICONS[key]}</svg>`;
+    }
+
+    /* ---------- MBTI prediction ---------- */
+    function predictMBTI(year, month, day, name) {
+      const hash = (year * 13 + month * 7 + day * 3 + (name?.length || 0) * 5);
+      return MBTI_LIST[((hash % 16) + 16) % 16];
+    }
+
+    function predict(data) {
+      const [y, m, d] = data.dob.split('-').map(Number);
+      const sun  = sunSign(m, d);
+      const moon = moonSign(y, m, d);
+      const rise = risingSign(y, m, d);
+      const city = CITIES[sun];
+      const mbti = predictMBTI(y, m, d, data.name);
+      const match = MATCH[mbti];
+      const rival = flipMBTI(mbti);
+      return { sun, moon, rise, city, mbti, match, rival };
+    }
+
+    function showChart(data) {
+      const p = predict(data);
+      const ch = CHARACTERS[p.mbti];
+
+      // Portrait + character
+      document.getElementById('portrait').innerHTML = iconSvg(ch.icon, 84);
+      document.getElementById('characterName').textContent = ch.name;
+      document.getElementById('characterSub').textContent = `${data.name.split(' ')[0]}'s Character`;
+
+      const d = new Date(data.dob);
+      const monthName = d.toLocaleString('en-US', { month: 'long' });
+      const parts = [`Born ${monthName} ${d.getDate()}, ${d.getFullYear()}`];
+      if (data.tob) parts.push(data.tob);
+      if (data.pob) parts.push(data.pob);
+      document.getElementById('characterStats').textContent = parts.join(' · ');
+
+      // Stars
+      document.getElementById('sunName').textContent  = p.sun;
+      document.getElementById('moonName').textContent = p.moon;
+      document.getElementById('riseName').textContent = p.rise;
+      document.getElementById('sunSym').textContent   = symbolOf(p.sun);
+      document.getElementById('moonSym').textContent  = symbolOf(p.moon);
+      document.getElementById('riseSym').textContent  = symbolOf(p.rise);
+
+      // MBTI
+      document.getElementById('mbtiCode').textContent = p.mbti;
+      document.getElementById('mbtiName').textContent = ch.name;
+      document.getElementById('mbtiDesc').textContent = ch.blurb;
+
+      // Match
+      const m1 = CHARACTERS[p.match];
+      document.getElementById('matchMbti').textContent = p.match;
+      document.getElementById('matchName').textContent = m1.name;
+      document.getElementById('matchIcon').innerHTML = iconSvg(m1.icon, 56);
+
+      // Rival
+      const r1 = CHARACTERS[p.rival];
+      document.getElementById('rivalMbti').textContent = p.rival;
+      document.getElementById('rivalName').textContent = r1.name;
+      document.getElementById('rivalIcon').innerHTML = iconSvg(r1.icon, 56);
+
+      // City
+      document.getElementById('cityName').textContent = p.city.city;
+      document.getElementById('cityVibe').textContent = p.city.vibe;
+
+      document.getElementById('formCard').hidden = true;
+      const chart = document.getElementById('chartCard');
+      chart.hidden = false;
+      chart.style.animation = 'none';
+      void chart.offsetWidth;
+      chart.style.animation = '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.getElementById('restartBtn').addEventListener('click', () => {
+      document.getElementById('chartCard').hidden = true;
+      document.getElementById('formCard').hidden = false;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    /* ---------- Form ---------- */
+    const form = document.getElementById('contactForm');
+    function setError(id, msg) { document.getElementById(id).textContent = msg || ''; }
+    function normalizePhone(v) { return v.replace(/[-\s]/g, ''); }
+    function validatePhone(v) { return /^0\d{8,9}$/.test(normalizePhone(v)); }
+    function validateEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      ['errName','errPhone','errEmail','errDob','errPob'].forEach(id => setError(id));
+
+      const name = form.name.value.trim();
+      const phone = form.phone.value.trim();
+      const email = form.email.value.trim();
+      const dob = form.dob.value;
+      const tob = form.tob.value;
+      const pob = form.pob.value.trim();
+      let ok = true;
+
+      if (name.length < 2) { setError('errName', 'Pray, enter your full name'); ok = false; }
+      if (!validatePhone(phone)) { setError('errPhone', 'A valid telephone number is required'); ok = false; }
+      if (!validateEmail(email)) { setError('errEmail', 'Invalid correspondence format'); ok = false; }
+      if (!dob) { setError('errDob', 'Please select your date of birth'); ok = false; }
+      if (pob.length < 2) { setError('errPob', 'Please enter your place of birth'); ok = false; }
+      if (!ok) return;
+
+      const list = load();
+      const normalized = normalizePhone(phone);
+      const dup = list.find(r => normalizePhone(r.phone || '') === normalized);
+      if (dup) {
+        setError('errPhone', `This number is already registered under "${dup.name}"`);
+        return;
+      }
+
+      const entry = { name, phone, email, dob, tob, pob, submittedAt: new Date().toISOString() };
+      list.push(entry);
+      save(list);
+
+      showChart(entry);
+      form.reset();
+    });
+
+    /* ---------- Admin ---------- */
+    const tbody = document.getElementById('tbody');
+    const empty = document.getElementById('empty');
+    const countEl = document.getElementById('count');
+    const searchInput = document.getElementById('searchInput');
+
+    function formatDate(iso) {
+      if (!iso) return '-';
+      const d = new Date(iso);
+      const pad = n => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+    function escapeHtml(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[c]));
+    }
+
+    function render() {
+      const all = load();
+      const q = searchInput.value.trim().toLowerCase();
+      const filtered = q
+        ? all.filter(r =>
+            (r.name || '').toLowerCase().includes(q) ||
+            (r.phone || '').toLowerCase().includes(q) ||
+            (r.email || '').toLowerCase().includes(q))
+        : all;
+
+      countEl.textContent = q
+        ? `${filtered.length} of ${all.length} entries`
+        : `${all.length} ${all.length === 1 ? 'entry' : 'entries'}`;
+
+      if (all.length === 0) {
+        tbody.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 32px; color: var(--faded); font-style: italic;">No matches for &ldquo;${escapeHtml(q)}&rdquo;</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map((r, i) => {
+        const origIndex = all.indexOf(r);
+        const born = [r.dob, r.tob].filter(Boolean).join(' ');
+        return `
+          <tr>
+            <td class="muted">${i + 1}</td>
+            <td class="name">${escapeHtml(r.name)}</td>
+            <td><a class="link" href="tel:${escapeHtml(r.phone)}">${escapeHtml(r.phone)}</a></td>
+            <td><a class="link" href="mailto:${escapeHtml(r.email)}">${escapeHtml(r.email)}</a></td>
+            <td class="muted">${escapeHtml(born) || '—'}</td>
+            <td class="muted">${escapeHtml(r.pob || '—')}</td>
+            <td class="muted">${formatDate(r.submittedAt)}</td>
+            <td><button class="row-action" data-idx="${origIndex}">Strike</button></td>
+          </tr>`;
+      }).join('');
+    }
+
+    tbody.addEventListener('click', e => {
+      const btn = e.target.closest('.row-action');
+      if (!btn) return;
+      const idx = Number(btn.dataset.idx);
+      const list = load();
+      const item = list[idx];
+      if (!item || !confirm(`Strike "${item.name}" from the ledger?`)) return;
+      list.splice(idx, 1);
+      save(list);
+      render();
+    });
+
+    searchInput.addEventListener('input', render);
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      const list = load();
+      if (list.length === 0) return;
+      if (!confirm(`Strike all ${list.length} entries from the ledger? This cannot be undone.`)) return;
+      save([]);
+      render();
+    });
+
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      const list = load();
+      if (list.length === 0) { alert('No entries to export'); return; }
+      const headers = ['Name', 'Telephone', 'Correspondence', 'Date of birth', 'Time of birth', 'Place of birth', 'Registered'];
+      const rows = list.map(r => [r.name, r.phone, r.email, r.dob || '', r.tob || '', r.pob || '', formatDate(r.submittedAt)]);
+      const csv = [headers, ...rows]
+        .map(row => row.map(cell => {
+          const s = String(cell ?? '');
+          return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+        }).join(','))
+        .join('\n');
+      const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ledger-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>
